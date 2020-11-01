@@ -9,7 +9,7 @@ services:
       - 5000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`ec2-34-229-78-180.compute-1.amazonaws.com`)"
+      - "traefik.http.routers.fastapi.rule=Host(`linkedin.idaf.ng`)"
       - "traefik.http.routers.fastapi.tls=true"
       - "traefik.http.routers.fastapi.tls.certresolver=letsencrypt"
 
