@@ -15,8 +15,8 @@ class Job:
         return lat_long
 
     def parser(self, state):
-        #path_to_json = 'services/api/data/' + state + '/'
-        path_to_json = 'data/' + state + '/'
+        path_to_json = 'services/api/data/' + state + '/'
+        #path_to_json = 'data/' + state + '/'
         job_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
         #print(json_files)  # for me this prints ['foo.json']
         job_items = []
@@ -33,18 +33,25 @@ class Job:
                     job['company'] = job_item['company']
                     job['description'] = job_item['description']
                     job_items.append(job)
+        with open(state + '.json', 'w') as state_data:
+            json.dump(job_items, state_data)
         return job_items
+
+    def fetch_data(self, state):
+        with open(state + '.json') as state_data:
+            job_items = json.load(state_data)
+            return job_items
 
        
 
     def get_jobs(self, state):
-        job_items = self.parser(state)
+        job_items = self.fetch_data(state)
         #jobs = [{k: item[k] for k in ('jobid', 'title', 'location', 'company', 'description')} for item in job_items]
         return job_items
 
     #def get_state_description(self, state):
-job = Job()
-job.parser('california')
+#job = Job()
+#job.fetch_data('texas')
 
 
 
