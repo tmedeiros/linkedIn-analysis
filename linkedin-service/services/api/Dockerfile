@@ -10,6 +10,10 @@ WORKDIR $WORKDIR
 RUN pip install --upgrade pip
 COPY ./requirements.txt $WORKDIR/requirements.txt
 COPY ./linkedin.json $WORKDIR/linkedin.json
+COPY ./texas.json $WORKDIR/texas.json
+COPY ./newyork.json $WORKDIR/newyork.json
+COPY ./california.json $WORKDIR/california.json
+
 RUN pip install -r requirements.txt
 
 RUN adduser --system --group $USER
