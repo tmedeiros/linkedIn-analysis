@@ -38,10 +38,9 @@ class Job:
         return job_items
 
     def fetch_data(self, state):
-        with open(state + '.json') as state_data:
+        with open('/home/app/web/' + state + '.json') as state_data:
             job_items = json.load(state_data)
             return job_items
-
        
 
     def get_jobs(self, state):
