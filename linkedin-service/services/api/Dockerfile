@@ -15,6 +15,7 @@ COPY ./newyork.json $WORKDIR/newyork.json
 COPY ./california.json $WORKDIR/california.json
 
 RUN pip install -r requirements.txt
+RUN [ "python", "-c", "import nltk; nltk.download('all')"]
 
 RUN adduser --system --group $USER
 RUN mkdir $APP_HOME

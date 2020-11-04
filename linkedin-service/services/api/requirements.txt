@@ -5,3 +5,4 @@ pandas==1.1.4
 #debugpy
 #geopy
 googlemaps==4.4.2
+nltk
