@@ -110,6 +110,23 @@ class Job:
             if frequency > 0:
                 job_count.append(job_name_count)
         return job_count
+    
+    def get_skill_freqeuncy(self, description):
+        most_popular_jobs = ['java', 'spark', 'python', 'javascript', \
+                        'C#', 'C', 'swift', 'php', 'scala', 'ruby', \
+                        'dart', 'R', 'typescript', 'julia', 'Go']
+        words = nltk.word_tokenize(description)
+        text = nltk.Text(words)
+        words = [word for word in words if word.lower() in most_popular_jobs]
+        word_count = nltk.FreqDist(words)
+        job_count = []
+        for word, frequency in word_count.most_common():
+            job_name_count = {}
+            job_name_count['name'] = word.lower()
+            job_name_count['count'] = frequency
+            if frequency > 0:
+                job_count.append(job_name_count)
+        return job_count
 
     def set_title(self, title):
         if 'machine learning' in title.lower() \
@@ -173,15 +190,114 @@ class Job:
                 name = key
                 count = item[1][name]
                 df.loc[counter] = [job, name, count]
-        print(df)
+        #print(df)
         return df
-        #return df.values.tolist()
 
-            
+    def get_geo_jobs(self):
+        states = ['newyork', 'california', 'texas']
+        #titles = job_data.groupby('job')
+        #titles = titles.groups.keys()
+        job_data = pd.DataFrame(columns=['lat_long', 'skill', 'count'])
+        count = 0
+        for state in states:
+            #job_items = self.fetch_data('services/api/' + state)
+            job_items = self.fetch_data(state)
+            for index, job  in enumerate(job_items):
+                #title = self.set_title(job['title'])
+                location = job['location']
+                if 'Dallas-Fort'.lower() in location.lower():
+                    city = 'Dallas'
+                    state = 'TX'
+                elif 'New York City'.lower() in location.lower():
+                    city = 'NY'
+                    state = 'NY'
+                elif 'Utica'.lower() in location.lower():
+                    city = 'Utica'
+                    state = 'NY'
+                else:
+                    location = job['location'].split(',')
+                    city = location[0]
+                    state = location[1]
+                lat = job['lat']
+                lon = job['lon']
+                lat_lon = (lat, lon)
+                company = job['company']
+                #description = job['description']
+                skills = self.get_job_freqeuncy(job['description'])
+                for skill in skills:
+                    for index, job in enumerate(skill):
+                        count += 1
+                        title = skill['name']
+                        job_count = skill['count']
+                        job_data.loc[count] = [lat_lon, title, job_count]
+        job_data = job_data.groupby(['lat_long','skill']).sum()
+        data = []
+        values = []
+        for value in job_data.values:
+            values.append(value[0])
 
-            #new_job[job['job']] = job['skill']
-            #jobs.append(new_job)
+        count = 0
+        for lat_long, job in job_data.index:
+            #print(job_data[idx])
+            data.append(str(lat_long) + ',' + job + ',' + str(values[count]))
+            count += 1
+        return data
 
+    def get_state_jobs(self):
+        states = ['newyork', 'california', 'texas']
+        #titles = job_data.groupby('job')
+        #titles = titles.groups.keys()
+        job_data = pd.DataFrame(columns=['state', 'skill', 'count'])
+        count = 0
+        for state in states:
+            #job_items = self.fetch_data('services/api/' + state)
+            job_items = self.fetch_data(state)
+            for index, job  in enumerate(job_items):
+                #title = self.set_title(job['title'])
+                location = job['location']
+                if 'Dallas-Fort'.lower() in location.lower():
+                    city = 'Dallas'
+                    state = 'TX'
+                elif 'New York City'.lower() in location.lower():
+                    city = 'NY'
+                    state = 'NY'
+                elif 'Utica'.lower() in location.lower():
+                    city = 'Utica'
+                    state = 'NY'
+                elif 'Texas'.lower() in location.lower():
+                    city = 'Dallas'
+                    state = 'TX'
+                elif 'United States'.lower() in location.lower():
+                    city = 'Dallas'
+                    state = 'TX'
+                else:
+                    location = job['location'].split(',')
+                    city = location[0]
+                    state = location[1]
+                lat = job['lat']
+                lon = job['lon']
+                lat_lon = (lat, lon)
+                company = job['company']
+                #description = job['description']
+                skills = self.get_job_freqeuncy(job['description'])
+                for skill in skills:
+                    for index, job in enumerate(skill):
+                        count += 1
+                        title = skill['name']
+                        job_count = skill['count']
+                        job_data.loc[count] = [state, title, job_count]
+        job_data = job_data.groupby(['state', 'skill']).sum()
+        data = []
+        values = []
+        for value in job_data.values:
+            values.append(value[0])
+
+        count = 0
+        for state, job in job_data.index:
+            #print(job_data[idx])
+            data.append(state.strip() + ',' + job + ',' + str(values[count]))
+            count += 1
+        return data
 
     def get_job_by_count(self, state):
         job_items = self.fetch_data(state)
@@ -210,7 +326,7 @@ class Job:
             count = 0
             job_data.loc[index] = [title, city, state, lat, lon, company, skill, count]
         #print(job_data.iloc[100:120,6].head(120))
-        print(job_data)
+        #print(job_data)
         df = self.get_job_name_count(job_data)
         return df
         
@@ -220,9 +336,15 @@ class Job:
 
     #def get_state_description(self, state):
 #job = Job()
+#geo_jobs = job.get_state_jobs()
+#print(geo_jobs)
+#with open('data2' + '.json', 'w') as state_data:
+            #json.dump(geo_jobs, state_data.to_json)
+#geo_jobs.to_json()
 #job.get_job_by_count('texas')
 #job.get_job_by_count('texas')
 #job.get_job_by_count('services/api/california')
+
 
 
 

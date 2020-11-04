@@ -25,3 +25,14 @@ async def jobs(state):
     jobs = job.get_job_by_count(state)
     return jobs
 
+@app.get("/get_geo_jobs")
+async def jobs():
+    job = Job()
+    jobs = job.get_geo_jobs()
+    return jobs
+
+@app.get("/get_state_jobs")
+async def jobs():
+    job = Job()
+    jobs = job.get_state_jobs()
+    return jobs
